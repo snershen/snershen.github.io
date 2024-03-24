@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="John Doe" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      MongoDB Shell 
+      
+      
+      |
+    
+     Jamie
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Jamie</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">MongoDB Shell</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2024-03-24 21:30:49
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/MongoDB/" title="MongoDB">
+                    #MongoDB
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>MongoDB 是一種非關聯式資料（NoSQL），談到資料庫，就會想到 CRUD 這個詞彙，指的是對資料進行的基本操作，分別是指新增(Create)、查詢(Read)、更新(Update)、移除(Delete)。</p>
+<p>有時我們只想對資料庫做些簡單操作，不需要使用後端語言，這時就可以透過 Mongo Shell，直接在終端機裡使用指令，對資料庫進行操作。</p>
+<h2 id="MongoDB-資料庫組成"><a href="#MongoDB-資料庫組成" class="headerlink" title="MongoDB 資料庫組成"></a>MongoDB 資料庫組成</h2><p>可分為三個層級，這裡搭配 Excel 的概念來幫助理解：</p>
+<ul>
+<li>Database：資料庫，類似建立或打開了一個 Excel 檔案</li>
+<li>Collections：Excel 檔案裡的工作表</li>
+<li>Document：工作表裡的某一筆資料</li>
+</ul>
+<p>首先會從 Database 層級，開始介紹指令。</p>
+<h2 id="資料庫"><a href="#資料庫" class="headerlink" title="資料庫"></a>資料庫</h2><ul>
+<li>查看目前有哪些資料庫：<code>show dbs</code></li>
+<li>新增&#x2F;切換資料庫：<code>use &lt;database name&gt;</code>，若存在就切換到該資料庫，不存在就新增</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">use bookstore</span><br><span class="line"><span class="comment">// 建立一個名為 bookstore 的資料庫</span></span><br></pre></td></tr></table></figure>
+
+<p>需要留意的是，這時使用 <code>show dbs</code> 指令，還不會看到 bookstore 資料庫，因為此資料庫裡還沒有加入任何 Collections。可以想像成 Excel 新建立的檔案，預設就會開一個工作表供編輯，只是資料庫需要我們手動做這件事。</p>
+<p>通常會指定要在某個工作表裡尋找某筆資料，所以接下來會一起介紹 Collections 和 Document 這兩個層級的指令。</p>
+<h2 id="Create"><a href="#Create" class="headerlink" title="Create"></a>Create</h2><h3 id="新增單筆資料"><a href="#新增單筆資料" class="headerlink" title="新增單筆資料"></a>新增單筆資料</h3><ul>
+<li><code>insertOne(&lt;data&gt;, &lt;options&gt;)</code>：新增單筆資料，data 須為「物件」形式</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">insertOne</span>(&#123; <span class="attr">price</span>: <span class="number">300</span>, <span class="attr">category</span>: <span class="string">&quot;社會科學&quot;</span>, <span class="attr">name</span>: <span class="string">&quot;被討厭的勇氣&quot;</span> &#125;);</span><br><span class="line"><span class="comment">// 目前 db 是指 bookstore 資料庫</span></span><br><span class="line"><span class="comment">// 因為尚未建立任何 Collections，所以此處是建立 Collections，並命名為 books</span></span><br><span class="line"><span class="comment">// 透過 insertOne 指令新增單筆資料</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="新增多筆資料"><a href="#新增多筆資料" class="headerlink" title="新增多筆資料"></a>新增多筆資料</h3><ul>
+<li><code>insertMany(&lt;data&gt;, &lt;options&gt;)</code>：新增多筆資料，data 須為「陣列」形式</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">insertOne</span>([</span><br><span class="line">  &#123; <span class="attr">rating</span>: <span class="number">4.5</span>, <span class="attr">price</span>: <span class="number">1000</span>, <span class="attr">name</span>: <span class="string">&quot;金錢心理學&quot;</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">rating</span>: <span class="number">4.5</span>, <span class="attr">price</span>: <span class="number">1000</span>, <span class="attr">name</span>: <span class="string">&quot;底層邏輯&quot;</span> &#125;,</span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Read"><a href="#Read" class="headerlink" title="Read"></a>Read</h2><p>查詢通常會搭配很多語法，這邊先介紹最簡單的，列出 bookstore 資料庫中，books 工作表裡的所有資料。</p>
+<ul>
+<li>查詢資料：<code>find(&lt;filter&gt;, &lt;options&gt;)</code></li>
+</ul>
+<p>若 find 參數為空值，就會列出所有資料，裡面也可以指定篩選條件，後續會再做進一步的介紹。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>();</span><br></pre></td></tr></table></figure>
+
+<p>可能會覺得終端機裡呈現的格式很醜，這時候可以加入 <code>pretty()</code> 格式化資料內容：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>().<span class="title function_">pretty</span>();</span><br></pre></td></tr></table></figure>
+
+<h2 id="Update"><a href="#Update" class="headerlink" title="Update"></a>Update</h2><p>Mongo Shell 指令裡更新資料的語法，有區分為更新該筆資料的「所有內容」和「部分內容」。</p>
+<p>這部分有點像網路請求方法裡的 put 和 patch，兩者都可以更新資料，但前者會將該筆資料整個替換掉，後者則只更新特定欄位。</p>
+<h3 id="部分更新單筆資料"><a href="#部分更新單筆資料" class="headerlink" title="部分更新單筆資料"></a>部分更新單筆資料</h3><ul>
+<li><code>updateOne(&lt;filter&gt;, &lt;update&gt;, &lt;options&gt;)</code>：只會更新第一筆符合條件的資料，並更新特定欄位，通常會搭配 id 做篩選</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">updateOne</span>(</span><br><span class="line">  &#123; <span class="attr">_id</span>: <span class="title class_">ObjectId</span>(<span class="string">&quot;5323442434234&quot;</span>) &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">$set</span>: &#123;</span><br><span class="line">      <span class="attr">rating</span>: <span class="number">3.0</span>,</span><br><span class="line">      <span class="attr">price</span>: <span class="number">1200</span>,</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&quot;哈利波特精裝版&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="部分更新多筆資料"><a href="#部分更新多筆資料" class="headerlink" title="部分更新多筆資料"></a>部分更新多筆資料</h3><ul>
+<li><code>updateMany(&lt;filter&gt;, &lt;update&gt;, &lt;options&gt;)</code>：更新多筆符合條件的資料，只會更新特定欄位</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">updateMany</span>(</span><br><span class="line">  &#123; <span class="attr">price</span>: <span class="number">400</span> &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">$set</span>: &#123;</span><br><span class="line">      <span class="attr">discount</span>: <span class="number">0.8</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>以上都是部份更新資料的語法，都會搭配 $set 運算子</p>
+</blockquote>
+<h3 id="替換掉整筆資料"><a href="#替換掉整筆資料" class="headerlink" title="替換掉整筆資料"></a>替換掉整筆資料</h3><ul>
+<li><code>replaceOne(&lt;filter&gt;, &lt;update&gt;, &lt;options&gt;))</code>：替換掉「第一筆」符合篩選條件的資料，會更新整筆資料的內容<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">replaceOne</span>(</span><br><span class="line">  &#123; <span class="attr">name</span>: <span class="string">&quot;被討厭的勇氣&quot;</span> &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&quot;被討厭的勇氣 增訂版&quot;</span>,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="Delete"><a href="#Delete" class="headerlink" title="Delete"></a>Delete</h2><h3 id="刪除單筆資料"><a href="#刪除單筆資料" class="headerlink" title="刪除單筆資料"></a>刪除單筆資料</h3><ul>
+<li><code>deleteOne(&lt;filter&gt;, &lt;options&gt;)</code>：刪除單筆資料，通常會搭配 id 做篩選</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">deleteOne</span>(&#123; <span class="attr">_id</span>: <span class="title class_">ObjectId</span>(<span class="string">&quot;5323442434234&quot;</span>) &#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="刪除多筆資料"><a href="#刪除多筆資料" class="headerlink" title="刪除多筆資料"></a>刪除多筆資料</h3><ul>
+<li><code>deleteMany(&lt;filter&gt;, &lt;options&gt;)</code>：刪除多筆資料</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">deleteMany</span>(&#123; <span class="attr">rating</span>: <span class="number">4.8</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="刪除所有資料"><a href="#刪除所有資料" class="headerlink" title="刪除所有資料"></a>刪除所有資料</h3><ul>
+<li><code>drop()</code></li>
+<li><code>remove()</code></li>
+</ul>
+<p>刪除所有資料，但不會刪除索引</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">drop</span>();</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">remove</span>();</span><br></pre></td></tr></table></figure>
+
+<h2 id="進階查詢"><a href="#進階查詢" class="headerlink" title="進階查詢"></a>進階查詢</h2><h3 id="單筆"><a href="#單筆" class="headerlink" title="單筆"></a>單筆</h3><ul>
+<li><code>findOne()</code>：查詢單筆資料，通常會搭配 id，只會找到第一個符合條件的資料</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">findOne</span>(&#123; <span class="attr">_id</span>: <span class="title class_">ObjectId</span>(<span class="string">&quot;5323442434234&quot;</span>) &#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="多筆"><a href="#多筆" class="headerlink" title="多筆"></a>多筆</h3><ul>
+<li>使用屬性查找</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 回傳符合 price 欄位是 2500 的 document</span></span><br><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(&#123; <span class="attr">price</span>: <span class="number">2500</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>寫入多個篩選條件，類似邏輯運算子裡的 and</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">deleteMany</span>(&#123; <span class="attr">price</span>: <span class="number">2500</span>, <span class="attr">rating</span>: <span class="number">4.0</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>區間：可放入比較運算子，但是 MongoDB 在這部分不是使用 &gt;, &lt; 等符號，需要另外記得運算子的寫法</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查詢價格為 1500 以下，評分為 4.7 以上</span></span><br><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(&#123;</span><br><span class="line">  <span class="attr">price</span>: &#123;</span><br><span class="line">    <span class="attr">$lte</span>: <span class="number">1500</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">rating</span>: &#123;</span><br><span class="line">    <span class="attr">$gte</span>: <span class="number">4.7</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>運算子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>等於</td>
+<td>$eq</td>
+</tr>
+<tr>
+<td>不等於</td>
+<td>$ne</td>
+</tr>
+<tr>
+<td>大於</td>
+<td>$gt</td>
+</tr>
+<tr>
+<td>小於</td>
+<td>$lt</td>
+</tr>
+<tr>
+<td>大於等於</td>
+<td>$gte</td>
+</tr>
+<tr>
+<td>小於等於</td>
+<td>$lte</td>
+</tr>
+<tr>
+<td>存在某個值</td>
+<td>$in</td>
+</tr>
+<tr>
+<td>不存在某個值</td>
+<td>$nin</td>
+</tr>
+</tbody></table>
+<ul>
+<li>關鍵字搜尋：只需要部分字串相同，寫成<code>/內容/</code>形式</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(&#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="regexp">/豪華/</span>,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>保護欄位：一些欄位的隱私性較高，不希望查詢時被看見，就能夠寫入 options 參數，0 是不要顯示此欄位，1 則是可以顯示</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="regexp">/豪華/</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">_id</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">rating</span>: <span class="number">0</span>,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>篩選陣列：有時欄位裡是放入陣列資料，需要透過 $in 篩選。需要注意的是，只要其中一個條件符合，就會撈取該資料，類似 <code>$or</code> 邏輯運算子</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(&#123;</span><br><span class="line">  <span class="attr">payment</span>: &#123;</span><br><span class="line">    <span class="attr">$in</span>: [<span class="string">&quot;信用卡&quot;</span>, <span class="string">&quot;ATM&quot;</span>],</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="邏輯運算子"><a href="#邏輯運算子" class="headerlink" title="邏輯運算子"></a>邏輯運算子</h3><p>通常有多重條件，會使用陣列形式</p>
+<ul>
+<li><code>$and</code>：符合所有條件</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(&#123;</span><br><span class="line">  <span class="attr">$and</span>: [&#123; <span class="attr">likes</span>: &#123; <span class="attr">$gte</span>: <span class="number">1500</span> &#125; &#125;, &#123; <span class="attr">comments</span>: &#123; <span class="attr">$gte</span>: <span class="number">1500</span> &#125; &#125;],</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>$or：符合其中一個欄位</code></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(&#123;</span><br><span class="line">  <span class="attr">$or</span>: [&#123; <span class="attr">likes</span>: &#123; <span class="attr">$gte</span>: <span class="number">1000</span> &#125; &#125;, &#123; <span class="attr">comments</span>: &#123; <span class="attr">$gte</span>: <span class="number">1000</span> &#125; &#125;],</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="操作陣列"><a href="#操作陣列" class="headerlink" title="操作陣列"></a>操作陣列</h2><ul>
+<li><code>$push</code>：陣列新增資料</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">updateOne</span>(</span><br><span class="line">  &#123; <span class="attr">_id</span>: <span class="title class_">ObjectId</span>(<span class="string">&quot;65f6f3504039b40bcfe20369&quot;</span>) &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">$push</span>: &#123;</span><br><span class="line">      <span class="attr">tags</span>: <span class="string">&quot;遊記&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>$addToSet</code>：陣列新增資料，若陣列已經有該資料就不會新增</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">updateOne</span>(</span><br><span class="line">  &#123; <span class="attr">_id</span>: <span class="title class_">ObjectId</span>(<span class="string">&quot;65f6f3504039b40bcfe20369&quot;</span>) &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">$addToSet</span>: &#123;</span><br><span class="line">      <span class="attr">tags</span>: <span class="string">&quot;遊記&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>$pull</code>：移除陣列中特定資料</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">updateMany</span>(</span><br><span class="line">  &#123;&#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">$pull</span>: &#123;</span><br><span class="line">      <span class="attr">tags</span>: <span class="string">&quot;感情&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="其他指令"><a href="#其他指令" class="headerlink" title="其他指令"></a>其他指令</h2><ul>
+<li>計算 document 數量：<code>find().count()</code></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>().<span class="title function_">count</span>();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查詢＋排序</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 時間由近到遠</span></span><br><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(&#123; <span class="attr">category</span>: <span class="string">&quot;社會科學&quot;</span> &#125;).<span class="title function_">sort</span>(&#123; <span class="attr">createdAt</span>: -<span class="number">1</span> &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 時間由遠到近</span></span><br><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(&#123; <span class="attr">category</span>: <span class="string">&quot;社會科學&quot;</span> &#125;).<span class="title function_">sort</span>(&#123; <span class="attr">createdAt</span>: <span class="number">1</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>限定取回的資料筆數：<code>limit()</code></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span>.<span class="title function_">find</span>(&#123; <span class="attr">category</span>: <span class="string">&quot;社會科學&quot;</span> &#125;).<span class="title function_">limit</span>(<span class="number">30</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>跳過 x 筆資料：<code>skip()</code></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">books</span></span><br><span class="line">  .<span class="title function_">find</span>(&#123; <span class="attr">comments</span>: &#123; <span class="attr">$gt</span>: <span class="number">100</span> &#125; &#125;)</span><br><span class="line">  .<span class="title function_">skip</span>(<span class="number">30</span>)</span><br><span class="line">  .<span class="title function_">limit</span>(<span class="number">30</span>);</span><br></pre></td></tr></table></figure>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2024/03/13/pinia_option-api/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2024-03-24 21:30:49
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/MongoDB/" title="MongoDB">
+                        #MongoDB
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MongoDB-%E8%B3%87%E6%96%99%E5%BA%AB%E7%B5%84%E6%88%90"><span class="toc-text">MongoDB 資料庫組成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B3%87%E6%96%99%E5%BA%AB"><span class="toc-text">資料庫</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Create"><span class="toc-text">Create</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%A2%9E%E5%96%AE%E7%AD%86%E8%B3%87%E6%96%99"><span class="toc-text">新增單筆資料</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%A2%9E%E5%A4%9A%E7%AD%86%E8%B3%87%E6%96%99"><span class="toc-text">新增多筆資料</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Read"><span class="toc-text">Read</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Update"><span class="toc-text">Update</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E6%9B%B4%E6%96%B0%E5%96%AE%E7%AD%86%E8%B3%87%E6%96%99"><span class="toc-text">部分更新單筆資料</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E6%9B%B4%E6%96%B0%E5%A4%9A%E7%AD%86%E8%B3%87%E6%96%99"><span class="toc-text">部分更新多筆資料</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%BF%E6%8F%9B%E6%8E%89%E6%95%B4%E7%AD%86%E8%B3%87%E6%96%99"><span class="toc-text">替換掉整筆資料</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Delete"><span class="toc-text">Delete</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%AA%E9%99%A4%E5%96%AE%E7%AD%86%E8%B3%87%E6%96%99"><span class="toc-text">刪除單筆資料</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%AA%E9%99%A4%E5%A4%9A%E7%AD%86%E8%B3%87%E6%96%99"><span class="toc-text">刪除多筆資料</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%AA%E9%99%A4%E6%89%80%E6%9C%89%E8%B3%87%E6%96%99"><span class="toc-text">刪除所有資料</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%B2%E9%9A%8E%E6%9F%A5%E8%A9%A2"><span class="toc-text">進階查詢</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%96%AE%E7%AD%86"><span class="toc-text">單筆</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E7%AD%86"><span class="toc-text">多筆</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%82%8F%E8%BC%AF%E9%81%8B%E7%AE%97%E5%AD%90"><span class="toc-text">邏輯運算子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E9%99%A3%E5%88%97"><span class="toc-text">操作陣列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E6%8C%87%E4%BB%A4"><span class="toc-text">其他指令</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/snershen">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        Copyright © 2024 Jamie
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜尋文章">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+
+      </div>
+    </div>
+  </body>
+</html>
